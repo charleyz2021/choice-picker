@@ -2,64 +2,148 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>choice</title>
+<title>Choice Picker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-    body {
-        height: 100vh;
-        margin: 0;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Segoe UI", "PingFang SC", sans-serif;
-        color: #fff;
-    }
+body {
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #6a6fd6, #7b5fc4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", "PingFang SC", sans-serif;
+    color: #fff;
+}
 
-    .card {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 40px 60px;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        width: 360px;
-    }
+.card {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+}
 
-    h1 {
-        margin-top: 0;
-        font-weight: 500;
-    }
+h1 {
+    margin: 0;
+    text-align: center;
+    font-weight: 600;
+}
 
-    .main {
-        font-size: 48px;
-        font-weight: bold;
-        margin-top: 30px;
-        height: 1.2em;
-    }
+.main {
+    text-align: center;
+    font-size: clamp(40px, 9vw, 52px);
+    font-weight: bold;
+    margin: 32px 0 8px;
+    height: 1.2em;
+}
 
-    .sub {
-        font-size: 28px;
-        margin-top: 10px;
-        opacity: 0.85;
-        height: 1.2em;
-    }
+.sub {
+    text-align: center;
+    font-size: clamp(22px, 6vw, 30px);
+    opacity: 0.9;
+    height: 1.2em;
+}
 
-    button {
-        margin-top: 40px;
-        background: #fff;
-        color: #764ba2;
-        border: none;
-        padding: 12px 30px;
-        font-size: 16px;
-        border-radius: 999px;
-        cursor: pointer;
-    }
+.primary-btn {
+    display: block;
+    margin: 28px auto 18px;
+    padding: 14px 36px;
+    font-size: 17px;
+    border-radius: 999px;
+    border: none;
+    background: #fff;
+    color: #6a6fd6;
+    cursor: pointer;
+}
 
-    button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+.primary-btn:disabled {
+    opacity: 0.5;
+}
+
+.toggle-config {
+    text-align: left;
+    font-size: 14px;
+    opacity: 0.85;
+    cursor: pointer;
+    margin: 6px 0 10px;
+}
+
+.config-panel {
+    display: none;
+    background: rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.config-panel.show {
+    display: block;
+}
+
+.category {
+    background: rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.category-title {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+input {
+    width: 100%;
+    margin-top: 6px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+}
+
+.small-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    opacity: 0.75;
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.secondary-btn {
+    flex: 1;
+    padding: 8px;
+    font-size: 13px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    color: #6a6fd6;
+    cursor: pointer;
+}
+
+.hint {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 8px;
+    line-height: 1.4;
+}
 </style>
 </head>
 
@@ -70,34 +154,177 @@
     <div class="main" id="main">?</div>
     <div class="sub" id="sub"></div>
 
-    <button id="btn" onclick="startPick()">抽选</button>
+    <button class="primary-btn" id="pickBtn">抽选</button>
+
+    <div class="toggle-config" id="toggleConfig">▼ 自定义事项</div>
+
+    <div class="config-panel" id="configPanel">
+        <div id="config"></div>
+
+        <div class="add-category" style="display:flex;gap:6px;margin-top:8px;">
+            <input id="newCatInput" placeholder="新增大类" />
+            <button class="secondary-btn" id="addCatConfirm">＋</button>
+        </div>
+
+        <div class="actions">
+            <button class="secondary-btn" id="resetBtn">↺ 重置默认</button>
+        </div>
+
+        <div class="hint">
+            ℹ️ 自定义事项会保存在当前浏览器中，<br>
+            使用无痕 / 隐私模式或更换浏览器会恢复为默认设置。
+        </div>
+    </div>
 </div>
 
 <script>
-/* ===== 只改这里 ===== */
-const data = {
-    A: ["a", "b", "c", "d"],
-    B: ["a", "b"],
-    C: ["a", "b", "c"],
-    D: ["a"]
+const defaultData = {
+    工作: ["处理邮件", "整理任务", "专注工作 30 分钟"],
+    学习: ["阅读资料", "学习新知识", "复习笔记"],
+    家务: ["收拾房间", "洗碗", "倒垃圾"],
+    休闲: ["看视频", "听音乐", "放空一下"],
+    运动: ["拉伸", "散步", "简单锻炼"],
+    自我照顾: ["喝水", "休息片刻", "深呼吸"]
 };
-/* ===================== */
+
+let categoryOrder =
+    JSON.parse(localStorage.getItem("category-order"))
+    || Object.keys(defaultData);
+
+let data = JSON.parse(localStorage.getItem("choice-data")) || structuredClone(defaultData);
 
 const mainEl = document.getElementById("main");
 const subEl = document.getElementById("sub");
-const btn = document.getElementById("btn");
+const pickBtn = document.getElementById("pickBtn");
+const configEl = document.getElementById("config");
+const panel = document.getElementById("configPanel");
+const newCatInput = document.getElementById("newCatInput");
+const addCatConfirm = document.getElementById("addCatConfirm");
+
+addCatConfirm.onclick = () => {
+    const name = newCatInput.value.trim();
+    if (!name) return;
+
+    if (data[name]) {
+        alert("这个大类已经存在");
+        return;
+    }
+
+    data[name] = [];
+    categoryOrder.push(name);
+    newCatInput.value = "";
+    save();
+};
+
+newCatInput.onkeydown = e => {
+    if (e.key === "Enter") {
+        addCatConfirm.click();
+    }
+};
+
+document.getElementById("toggleConfig").onclick = () => {
+    panel.classList.toggle("show");
+};
+
+document.getElementById("resetBtn").onclick = () => {
+    if (confirm("将清空自定义事项并恢复默认设置，确定吗？")) {
+        localStorage.removeItem("choice-data");
+        data = structuredClone(defaultData);
+        save();
+    }
+};
+
+pickBtn.onclick = startPick;
+
+function save() {
+    localStorage.setItem("choice-data", JSON.stringify(data));
+    localStorage.setItem("category-order", JSON.stringify(categoryOrder));
+    renderConfig();
+}
+
+function renderConfig() {
+    configEl.innerHTML = "";
+    categoryOrder.forEach(cat => {
+        const items = data[cat];
+        if (!items) return;
+
+        const box = document.createElement("div");
+        box.className = "category";
+
+        box.innerHTML = `
+            <div class="category-title">
+                ${cat}
+                <button class="small-btn" data-del-cat="${cat}">×</button>
+            </div>
+        `;
+
+        // 已有事项
+        items.forEach((item, i) => {
+            const row = document.createElement("div");
+            row.className = "item";
+            row.innerHTML = `
+                ${item}
+                <button class="small-btn" data-del-item="${cat}|${i}">×</button>
+            `;
+            box.appendChild(row);
+        });
+
+        // 输入行：输入框 + 加号按钮（手机 / 电脑通用）
+        const inputWrap = document.createElement("div");
+        inputWrap.style.display = "flex";
+        inputWrap.style.gap = "6px";
+        inputWrap.style.marginTop = "6px";
+
+        const input = document.createElement("input");
+        input.placeholder = "新增事项";
+
+        const addBtn = document.createElement("button");
+        addBtn.innerText = "＋";
+        addBtn.className = "small-btn";
+
+        // 点击 + 新增事项
+        addBtn.onclick = () => {
+            const value = input.value.trim();
+            if (!value) return;
+            data[cat].push(value);
+            input.value = "";
+            save();
+        };
+
+        // 回车也可以新增
+        input.onkeydown = e => {
+            if (e.key === "Enter") {
+                addBtn.click();
+            }
+        };
+
+        inputWrap.appendChild(input);
+        inputWrap.appendChild(addBtn);
+        box.appendChild(inputWrap);
+
+        configEl.appendChild(box);
+    });
+
+    configEl.querySelectorAll("[data-del-cat]").forEach(btn => {
+        btn.onclick = () => {
+            delete data[btn.dataset.delCat];
+            save();
+        };
+    });
+
+    configEl.querySelectorAll("[data-del-item]").forEach(btn => {
+        const [cat, idx] = btn.dataset.delItem.split("|");
+        btn.onclick = () => {
+            data[cat].splice(idx, 1);
+            save();
+        };
+    });
+}
 
 function randomPick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-/**
- * 滚动动画：
- * el      要显示的元素
- * options 可选项数组
- * duration 滚动时长（ms）
- * done    回调，返回最终结果
- */
 function roll(el, options, duration, done) {
     const start = Date.now();
     const timer = setInterval(() => {
@@ -112,20 +339,29 @@ function roll(el, options, duration, done) {
 }
 
 function startPick() {
-    btn.disabled = true;
+    const mains = Object.keys(data);
+    if (!mains.length) {
+        alert("请先添加一些事项");
+        return;
+    }
+
+    pickBtn.disabled = true;
     subEl.innerText = "";
 
-    const mains = Object.keys(data);
-
-    // ① 先滚大类
-    roll(mainEl, mains, 1200, (main) => {
-
-        // ② 再滚小类
-        roll(subEl, data[main], 900, () => {
-            btn.disabled = false;
+    roll(mainEl, mains, 1200, main => {
+        const subs = data[main];
+        if (!subs.length) {
+            subEl.innerText = "（无事项）";
+            pickBtn.disabled = false;
+            return;
+        }
+        roll(subEl, subs, 900, () => {
+            pickBtn.disabled = false;
         });
     });
 }
+
+renderConfig();
 </script>
 </body>
 </html>
