@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>choice</title>
+
+<style>
+    body {
+        height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Segoe UI", "PingFang SC", sans-serif;
+        color: #fff;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 40px 60px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        width: 360px;
+    }
+
+    h1 {
+        margin-top: 0;
+        font-weight: 500;
+    }
+
+    .main {
+        font-size: 48px;
+        font-weight: bold;
+        margin-top: 30px;
+        height: 1.2em;
+    }
+
+    .sub {
+        font-size: 28px;
+        margin-top: 10px;
+        opacity: 0.85;
+        height: 1.2em;
+    }
+
+    button {
+        margin-top: 40px;
+        background: #fff;
+        color: #764ba2;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 999px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+</head>
+
+<body>
+<div class="card">
+    <h1>就决定是</h1>
+
+    <div class="main" id="main">?</div>
+    <div class="sub" id="sub"></div>
+
+    <button id="btn" onclick="startPick()">抽选</button>
+</div>
+
+<script>
+/* ===== 只改这里 ===== */
+const data = {
+    A: ["a", "b", "c", "d"],
+    B: ["a", "b"],
+    C: ["a", "b", "c"],
+    D: ["a"]
+};
+/* ===================== */
+
+const mainEl = document.getElementById("main");
+const subEl = document.getElementById("sub");
+const btn = document.getElementById("btn");
+
+function randomPick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/**
+ * 滚动动画：
+ * el      要显示的元素
+ * options 可选项数组
+ * duration 滚动时长（ms）
+ * done    回调，返回最终结果
+ */
+function roll(el, options, duration, done) {
+    const start = Date.now();
+    const timer = setInterval(() => {
+        el.innerText = randomPick(options);
+        if (Date.now() - start >= duration) {
+            clearInterval(timer);
+            const final = randomPick(options);
+            el.innerText = final;
+            done && done(final);
+        }
+    }, 60);
+}
+
+function startPick() {
+    btn.disabled = true;
+    subEl.innerText = "";
+
+    const mains = Object.keys(data);
+
+    // ① 先滚大类
+    roll(mainEl, mains, 1200, (main) => {
+
+        // ② 再滚小类
+        roll(subEl, data[main], 900, () => {
+            btn.disabled = false;
+        });
+    });
+}
+</script>
+</body>
+</html>
