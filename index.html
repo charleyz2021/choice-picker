@@ -1,367 +1,614 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="UTF-8">
-<title>Choice Picker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Choice Picker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-    min-height: 100vh;
-    margin: 0;
-    background: linear-gradient(135deg, #6a6fd6, #7b5fc4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Segoe UI", "PingFang SC", sans-serif;
-    color: #fff;
-}
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #6a6fd6, #7b5fc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Segoe UI", "PingFang SC", sans-serif;
+            color: #fff;
+        }
 
-.card {
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 28px 24px 24px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.25);
-}
+        .card {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 28px 24px 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+        }
 
-h1 {
-    margin: 0;
-    text-align: center;
-    font-weight: 600;
-}
+        h1 {
+            margin: 0;
+            text-align: center;
+            font-weight: 600;
+        }
 
-.main {
-    text-align: center;
-    font-size: clamp(40px, 9vw, 52px);
-    font-weight: bold;
-    margin: 32px 0 8px;
-    height: 1.2em;
-}
+        .main {
+            text-align: center;
+            font-size: clamp(40px, 9vw, 52px);
+            font-weight: bold;
+            margin: 32px 0 8px;
+            height: 1.2em;
+        }
 
-.sub {
-    text-align: center;
-    font-size: clamp(22px, 6vw, 30px);
-    opacity: 0.9;
-    height: 1.2em;
-}
+        .sub {
+            text-align: center;
+            font-size: clamp(22px, 6vw, 30px);
+            opacity: 0.9;
+            height: 1.2em;
+        }
 
-.primary-btn {
-    display: block;
-    margin: 28px auto 18px;
-    padding: 14px 36px;
-    font-size: 17px;
-    border-radius: 999px;
-    border: none;
-    background: #fff;
-    color: #6a6fd6;
-    cursor: pointer;
-}
+        .primary-btn {
+            display: block;
+            margin: 28px auto 18px;
+            padding: 14px 36px;
+            font-size: 17px;
+            border-radius: 999px;
+            border: none;
+            background: #fff;
+            color: #6a6fd6;
+            cursor: pointer;
+        }
 
-.primary-btn:disabled {
-    opacity: 0.5;
-}
+        .primary-btn:disabled {
+            opacity: 0.5;
+        }
 
-.toggle-config {
-    text-align: left;
-    font-size: 14px;
-    opacity: 0.85;
-    cursor: pointer;
-    margin: 6px 0 10px;
-}
+        .toggle-config {
+            text-align: left;
+            font-size: 14px;
+            opacity: 0.85;
+            cursor: pointer;
+            margin: 6px 0 10px;
+        }
 
-.config-panel {
-    display: none;
-    background: rgba(255,255,255,0.15);
-    border-radius: 14px;
-    padding: 12px;
-}
+        .config-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            padding: 12px;
+        }
 
-.config-panel.show {
-    display: block;
-}
+        .config-panel.show {
+            display: block;
+        }
 
-.category {
-    background: rgba(255,255,255,0.18);
-    border-radius: 10px;
-    padding: 8px;
-    margin-bottom: 10px;
-}
+        .category {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
 
-.category-title {
-    display: flex;
-    justify-content: space-between;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
+        .category-title {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
 
-.item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    margin: 4px 0;
-}
+        .item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin: 4px 0;
+        }
 
-input {
-    width: 100%;
-    margin-top: 6px;
-    padding: 6px 8px;
-    border-radius: 8px;
-    border: none;
-    font-size: 14px;
-}
+        input {
+            width: 100%;
+            margin-top: 6px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+        }
 
-.small-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    opacity: 0.75;
-    cursor: pointer;
-}
+        .small-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            opacity: 0.75;
+            cursor: pointer;
+        }
 
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-.secondary-btn {
-    flex: 1;
-    padding: 8px;
-    font-size: 13px;
-    border-radius: 999px;
-    border: none;
-    background: rgba(255,255,255,0.85);
-    color: #6a6fd6;
-    cursor: pointer;
-}
+        .secondary-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+            border-radius: 999px;
+            border: none;
+            background: rgba(255, 255, 255, 0.85);
+            color: #6a6fd6;
+            cursor: pointer;
+        }
 
-.hint {
-    font-size: 12px;
-    opacity: 0.7;
-    margin-top: 8px;
-    line-height: 1.4;
-}
-</style>
+        .hint {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .hint-ok {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .hint-err {
+            color: #ffd6d6;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-4px);
+            }
+
+            40% {
+                transform: translateX(4px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        .input-error {
+            outline: 2px solid rgba(255, 120, 120, 0.9);
+            animation: shake .25s linear;
+        }
+    </style>
 </head>
 
 <body>
-<div class="card">
-    <h1>就决定是</h1>
+    <div class="card">
+        <h1>就决定是</h1>
 
-    <div class="main" id="main">?</div>
-    <div class="sub" id="sub"></div>
+        <div class="main" id="main">?</div>
+        <div class="sub" id="sub"></div>
 
-    <button class="primary-btn" id="pickBtn">抽选</button>
+        <button class="primary-btn" id="pickBtn">抽选</button>
 
-    <div class="toggle-config" id="toggleConfig">▼ 自定义事项</div>
+        <div class="toggle-config" id="toggleConfig">▼ 自定义事项</div>
 
-    <div class="config-panel" id="configPanel">
-        <div id="config"></div>
+        <div class="config-panel" id="configPanel">
+            <div id="config"></div>
 
-        <div class="add-category" style="display:flex;gap:6px;margin-top:8px;">
-            <input id="newCatInput" placeholder="新增大类" />
-            <button class="secondary-btn" id="addCatConfirm">＋</button>
-        </div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+                <input id="newCatInput" placeholder="新增大类">
+                <button class="secondary-btn" id="addCatBtn">＋</button>
+            </div>
 
-        <div class="actions">
-            <button class="secondary-btn" id="resetBtn">↺ 重置默认</button>
-        </div>
+            <div id="catHint" style="margin-top:6px;font-size:12px;opacity:.85;min-height:1.2em;"></div>
 
-        <div class="hint">
-            ℹ️ 自定义事项会保存在当前浏览器中，<br>
-            使用无痕 / 隐私模式或更换浏览器会恢复为默认设置。
+            <div class="actions">
+                <button class="secondary-btn" id="resetBtn">↺ 重置默认</button>
+            </div>
+
+            <div class="hint">
+                ℹ️ 自定义事项会保存在当前浏览器中，<br>
+                使用无痕 / 隐私模式或更换浏览器会恢复为默认设置。
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-const defaultData = {
-    工作: ["处理邮件", "整理任务", "专注工作 30 分钟"],
-    学习: ["阅读资料", "学习新知识", "复习笔记"],
-    家务: ["收拾房间", "洗碗", "倒垃圾"],
-    休闲: ["看视频", "听音乐", "放空一下"],
-    运动: ["拉伸", "散步", "简单锻炼"],
-    自我照顾: ["喝水", "休息片刻", "深呼吸"]
-};
+    <script>
+        /* ====== BUILD / VERSION ====== */
 
-let categoryOrder =
-    JSON.parse(localStorage.getItem("category-order"))
-    || Object.keys(defaultData);
+        const BUILD_ID = "2026-02-01-a";
 
-let data = JSON.parse(localStorage.getItem("choice-data")) || structuredClone(defaultData);
+        /* ================== 默认数据 ================== */
 
-const mainEl = document.getElementById("main");
-const subEl = document.getElementById("sub");
-const pickBtn = document.getElementById("pickBtn");
-const configEl = document.getElementById("config");
-const panel = document.getElementById("configPanel");
-const newCatInput = document.getElementById("newCatInput");
-const addCatConfirm = document.getElementById("addCatConfirm");
+        const defaultData = {
+            工作: ["处理邮件", "整理任务", "专注工作 30 分钟"],
+            学习: ["阅读资料", "学习新知识", "复习笔记"],
+            家务: ["收拾房间", "洗碗", "倒垃圾"],
+            休闲: ["看视频", "听音乐", "放空一下"],
+            运动: ["拉伸", "散步", "简单锻炼"],
+            自我照顾: ["喝水", "休息片刻", "深呼吸"]
+        };
 
-addCatConfirm.onclick = () => {
-    const name = newCatInput.value.trim();
-    if (!name) return;
+        const defaultOrder = Object.keys(defaultData);
 
-    if (data[name]) {
-        alert("这个大类已经存在");
-        return;
-    }
+        /* ================== storage keys ================== */
+        const KEY_DATA = "choice-data";
+        const KEY_ORDER = "choice-order";
 
-    data[name] = [];
-    categoryOrder.push(name);
-    newCatInput.value = "";
-    save();
-};
+        /* ================== DOM ================== */
 
-newCatInput.onkeydown = e => {
-    if (e.key === "Enter") {
-        addCatConfirm.click();
-    }
-};
+        const mainEl = document.getElementById("main");
+        const subEl = document.getElementById("sub");
+        const pickBtn = document.getElementById("pickBtn");
+        const configEl = document.getElementById("config");
+        const panel = document.getElementById("configPanel");
+        const newCatInput = document.getElementById("newCatInput");
+        const addCatBtn = document.getElementById("addCatBtn");
+        const catHintEl = document.getElementById("catHint");
+        const toggleConfigBtn = document.getElementById("toggleConfig");
+        const resetBtn = document.getElementById("resetBtn");
 
-document.getElementById("toggleConfig").onclick = () => {
-    panel.classList.toggle("show");
-};
+        /* ================== 小工具：提示 ================== */
 
-document.getElementById("resetBtn").onclick = () => {
-    if (confirm("将清空自定义事项并恢复默认设置，确定吗？")) {
-        localStorage.removeItem("choice-data");
-        data = structuredClone(defaultData);
-        save();
-    }
-};
+        let hintTimer = null;
 
-pickBtn.onclick = startPick;
+        function showCatHint(msg, type = "ok") {
+            if (!catHintEl) return;
+            catHintEl.textContent = msg;
+            catHintEl.className = type === "err" ? "hint-err" : "hint-ok";
 
-function save() {
-    localStorage.setItem("choice-data", JSON.stringify(data));
-    localStorage.setItem("category-order", JSON.stringify(categoryOrder));
-    renderConfig();
-}
+            if (hintTimer) clearTimeout(hintTimer);
+            hintTimer = setTimeout(() => {
+                catHintEl.textContent = "";
+                catHintEl.className = "";
+            }, 1800);
+        }
 
-function renderConfig() {
-    configEl.innerHTML = "";
-    categoryOrder.forEach(cat => {
-        const items = data[cat];
-        if (!items) return;
+        /* ================== 规范化分类名 ================== */
 
-        const box = document.createElement("div");
-        box.className = "category";
+        function normalizeKey(k) {
+            return String(k)
+                .replace(/[\u200B-\u200D\uFEFF]/g, "") // 零宽字符/BOM
+                .replace(/\u3000/g, " ")              // 全角空格
+                .trim();
+        }
 
-        box.innerHTML = `
+        /* ================== 初始化：加载 + 自愈 ================== */
+
+        let data = loadData();
+        let categoryOrder = loadOrder(data);
+
+        function loadData() {
+            // 用“是否存在 key”判断是否该用默认
+            const rawStr = localStorage.getItem(KEY_DATA);
+
+            // 只有在“根本没有存过”时，才回到默认
+            if (rawStr === null) return structuredClone(defaultData);
+
+            let raw = null;
+            try { raw = JSON.parse(rawStr); } catch { return structuredClone(defaultData); }
+            if (!raw || typeof raw !== "object") return structuredClone(defaultData);
+
+            // 清洗/合并“看起来一样”的分类名（例如 "工作" vs "工作 "）
+            const cleaned = {};
+            for (const [k, v] of Object.entries(raw)) {
+                const nk = normalizeKey(k);
+                if (!nk) continue;
+                if (!cleaned[nk]) cleaned[nk] = [];
+                const arr = Array.isArray(v) ? v : [];
+                cleaned[nk].push(...arr);
+            }
+            // return Object.keys(cleaned).length ? cleaned : structuredClone(defaultData);
+            // 空对象代表用户主动删除了所有大类，不再“空就回默认”
+            return cleaned;
+        }
+
+        function loadOrder(currentData) {
+            let raw = null;
+            try { raw = JSON.parse(localStorage.getItem(KEY_ORDER)); } catch { }
+
+            const dataKeys = Object.keys(currentData);
+
+            // 1) 没有顺序数据（老用户），自动生成一次（但以后新增就靠 push 保序）
+            if (!Array.isArray(raw)) {
+                const order = [...dataKeys]; // 初次迁移：用当前 data 的 keys
+                // 写回一次，后续就不会被 JS 的数字键排序坑到
+                localStorage.setItem(KEY_ORDER, JSON.stringify(order));
+                return order;
+            }
+
+            // 2) 有顺序数据：过滤掉 data 不存在的项 + 去重 + 保留原顺序
+            const seen = new Set();
+            const order = [];
+            for (const k of raw) {
+                const nk = normalizeKey(k);
+                if (!nk) continue;
+                if (!(nk in currentData)) continue;
+                if (seen.has(nk)) continue;
+                seen.add(nk);
+                order.push(nk);
+            }
+
+            // 3) 如果 data 里出现了“顺序里没有的新分类”（可能来自旧版本/手改），补到末尾
+            for (const k of dataKeys) {
+                const nk = normalizeKey(k);
+                if (!nk) continue;
+                if (!seen.has(nk)) {
+                    seen.add(nk);
+                    order.push(nk);
+                }
+            }
+
+            // 写回干净顺序（自愈一次）
+            localStorage.setItem(KEY_ORDER, JSON.stringify(order));
+            return order;
+        }
+
+        // function sanitizeData(raw) {
+        //   const out = {};
+        //   if (!raw || typeof raw !== "object") return structuredClone(defaultData);
+
+        //   for (const [k, v] of Object.entries(raw)) {
+        //     const nk = normalizeKey(k);
+        //     if (!nk) continue;
+
+        //     const arr = Array.isArray(v) ? v : [];
+        //     if (!out[nk]) out[nk] = [];
+        //     // 合并事项（允许重复事项以提高概率则不要去重；这里保持原样合并）
+        //     out[nk].push(...arr);
+        //   }
+
+        //   // 如果清洗后为空，则回到默认
+        //   return Object.keys(out).length ? out : structuredClone(defaultData);
+        // }
+
+        // /* ================== 初始化（只读） ================== */
+
+        // let data = JSON.parse(localStorage.getItem("choice-data"));
+        // data = sanitizeData(data);
+        // localStorage.setItem("choice-data", JSON.stringify(data));
+
+        /* ================== save（唯一写入点） ================== */
+
+        function save() {
+            localStorage.setItem(KEY_DATA, JSON.stringify(data));
+            localStorage.setItem(KEY_ORDER, JSON.stringify(categoryOrder));
+            renderConfig();
+        }
+
+        /* ================== 抽选 ================== */
+
+        function randomPick(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function roll(el, options, duration, done) {
+            const start = Date.now();
+            const timer = setInterval(() => {
+                el.innerText = randomPick(options);
+                if (Date.now() - start >= duration) {
+                    clearInterval(timer);
+                    el.innerText = randomPick(options);
+                    done && done();
+                }
+            }, 60);
+        }
+
+        function startPick() {
+            // 用 categoryOrder 保序（数字类目不会跑上去）
+            const mains = categoryOrder.filter(c => c in data);
+            // const mains = categoryOrder.filter(c => Array.isArray(data[c]) && data[c].length);
+
+            if (!mains.length) {
+                alert("请先添加一些事项");
+                return;
+            }
+
+            pickBtn.disabled = true;
+            subEl.innerText = "";
+
+            // 先抽大类（不要求有小类）
+            roll(mainEl, mains, 1200, () => {
+                const main = mainEl.innerText;
+                const subs = Array.isArray(data[main]) ? data[main] : [];
+
+                if (!subs.length) {
+                    // subEl.innerText = "（该类暂无事项，请先添加）";
+                    pickBtn.disabled = false;
+                    return;
+                }
+
+                // 再抽小类
+                roll(subEl, subs, 900, () => {
+                    pickBtn.disabled = false;
+                });
+            });
+        }
+
+        /* ================== 新增大类 ================== */
+
+        // function flashInputError() {
+        //   newCatInput.classList.remove("input-error");
+        //   // 触发重排，让动画可重复播放
+        //   void newCatInput.offsetWidth;
+        //   newCatInput.classList.add("input-error");
+        //   setTimeout(() => newCatInput.classList.remove("input-error"), 350);
+        // }
+
+        let addingLock = false;
+
+        function addCategory() {
+            if (addingLock) return;
+            addingLock = true;
+
+            const name = normalizeKey(newCatInput.value);
+
+            //   const name = newCatInput.value.trim();
+
+            if (!name) {
+                showCatHint("请输入大类名称", "err");
+                // flashInputError();
+                addingLock = false;
+                return;
+            }
+
+            if (data[name]) {
+                showCatHint(`「${name}」已存在，请换一个名称`, "err");
+                // flashInputError();
+                addingLock = false;
+                return;
+            }
+
+            data[name] = [];
+            categoryOrder.push(name); // 永远加到最下面
+            newCatInput.value = "";
+            save();
+            showCatHint(`已添加大类：${name}`, "ok");
+
+            setTimeout(() => (addingLock = false), 0);
+        }
+
+
+        /* ================== 渲染配置 ================== */
+
+        function renderConfig() {
+            configEl.innerHTML = "";
+
+            // 渲染时过滤不存在项 + 去重
+            const seen = new Set();
+            categoryOrder = categoryOrder
+                .map(normalizeKey)
+                .filter(k => k && (k in data))
+                .filter(k => (seen.has(k) ? false : (seen.add(k), true)));
+
+            // data = sanitizeData(data);
+
+            categoryOrder.forEach(cat => {
+                const box = document.createElement("div");
+                box.className = "category";
+
+                box.innerHTML = `
             <div class="category-title">
                 ${cat}
-                <button class="small-btn" data-del-cat="${cat}">×</button>
+                <button class="small-btn">×</button>
             </div>
         `;
 
-        // 已有事项
-        items.forEach((item, i) => {
-            const row = document.createElement("div");
-            row.className = "item";
-            row.innerHTML = `
+                // 删除大类：同时删 data + order
+                box.querySelector("button").onclick = () => {
+                    delete data[cat];
+                    categoryOrder = categoryOrder.filter(c => c !== cat);
+                    save();
+                };
+
+                // 已有事项
+                data[cat].forEach((item, i) => {
+                    const row = document.createElement("div");
+                    row.className = "item";
+                    row.innerHTML = `
                 ${item}
-                <button class="small-btn" data-del-item="${cat}|${i}">×</button>
+                <button class="small-btn">×</button>
             `;
-            box.appendChild(row);
-        });
+                    row.querySelector("button").onclick = () => {
+                        data[cat].splice(i, 1);
+                        save();
+                    };
+                    box.appendChild(row);
+                });
 
-        // 输入行：输入框 + 加号按钮（手机 / 电脑通用）
-        const inputWrap = document.createElement("div");
-        inputWrap.style.display = "flex";
-        inputWrap.style.gap = "6px";
-        inputWrap.style.marginTop = "6px";
+                // 输入行：输入框 + 加号按钮（手机 / 电脑通用）
+                const inputRow = document.createElement("div");
+                inputRow.style.display = "flex";
+                inputRow.style.gap = "6px";
+                inputRow.style.marginTop = "6px";
 
-        const input = document.createElement("input");
-        input.placeholder = "新增事项";
+                const input = document.createElement("input");
+                input.placeholder = "新增事项";
 
-        const addBtn = document.createElement("button");
-        addBtn.innerText = "＋";
-        addBtn.className = "small-btn";
+                const addBtn = document.createElement("button");
+                addBtn.innerText = "＋";
+                addBtn.className = "small-btn";
 
-        // 点击 + 新增事项
-        addBtn.onclick = () => {
-            const value = input.value.trim();
-            if (!value) return;
-            data[cat].push(value);
-            input.value = "";
-            save();
-        };
+                // 点击 + 新增事项
+                addBtn.onclick = () => {
+                    const v = input.value.trim();
+                    if (!v) return;
+                    data[cat].push(v);
+                    input.value = "";
+                    save();
+                };
 
-        // 回车也可以新增
-        input.onkeydown = e => {
+                // 回车也可以新增
+                input.onkeydown = e => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        addBtn.click();
+                    }
+                };
+
+                inputRow.append(input, addBtn);
+                box.appendChild(inputRow);
+
+                configEl.appendChild(box);
+            });
+
+            // 保存一次“清洗后的 order”（可选但推荐）
+            localStorage.setItem(KEY_ORDER, JSON.stringify(categoryOrder));
+
+            // 在 UI 上显示版本号，确认跑的是新代码
+            // 把 BUILD 写进提示区域（hint）的最后一行
+            const hint = document.querySelector(".hint");
+            if (hint) {
+                const existed = hint.querySelector("[data-build]");
+                if (existed) existed.remove();
+                const div = document.createElement("div");
+                div.setAttribute("data-build", "1");
+                div.style.marginTop = "6px";
+                div.style.opacity = "0.6";
+                div.innerText = `Build: ${BUILD_ID}`;
+                hint.appendChild(div);
+            }
+        }
+
+        /* ================== 事件绑定 ================== */
+
+        pickBtn.onclick = startPick;
+        addCatBtn.onclick = addCategory;
+
+        newCatInput.onkeydown = e => {
             if (e.key === "Enter") {
-                addBtn.click();
+                e.preventDefault();
+                addCategory();
             }
         };
 
-        inputWrap.appendChild(input);
-        inputWrap.appendChild(addBtn);
-        box.appendChild(inputWrap);
-
-        configEl.appendChild(box);
-    });
-
-    configEl.querySelectorAll("[data-del-cat]").forEach(btn => {
-        btn.onclick = () => {
-            delete data[btn.dataset.delCat];
-            save();
+        toggleConfigBtn.onclick = () => {
+            panel.classList.toggle("show");
         };
-    });
 
-    configEl.querySelectorAll("[data-del-item]").forEach(btn => {
-        const [cat, idx] = btn.dataset.delItem.split("|");
-        btn.onclick = () => {
-            data[cat].splice(idx, 1);
+        /* ================== 重置 ==================*/
+
+        resetBtn.onclick = () => {
+            if (!confirm("将清空自定义事项并恢复默认设置，确定吗？")) return;
+
+            //   // 只清本工具相关 key（不要 clear 全站数据）
+            //   localStorage.removeItem("choice-data");
+
+            // 完全重建
+            data = structuredClone(defaultData);
+            categoryOrder = [...defaultOrder];
             save();
+            showCatHint("已恢复默认设置", "ok");
         };
-    });
-}
 
-function randomPick(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
+        /* ================== 首次渲染 ================== */
 
-function roll(el, options, duration, done) {
-    const start = Date.now();
-    const timer = setInterval(() => {
-        el.innerText = randomPick(options);
-        if (Date.now() - start >= duration) {
-            clearInterval(timer);
-            const final = randomPick(options);
-            el.innerText = final;
-            done && done(final);
-        }
-    }, 60);
-}
-
-function startPick() {
-    const mains = Object.keys(data);
-    if (!mains.length) {
-        alert("请先添加一些事项");
-        return;
-    }
-
-    pickBtn.disabled = true;
-    subEl.innerText = "";
-
-    roll(mainEl, mains, 1200, main => {
-        const subs = data[main];
-        if (!subs.length) {
-            subEl.innerText = "（无事项）";
-            pickBtn.disabled = false;
-            return;
-        }
-        roll(subEl, subs, 900, () => {
-            pickBtn.disabled = false;
-        });
-    });
-}
-
-renderConfig();
-</script>
+        renderConfig();
+    </script>
 </body>
+
 </html>

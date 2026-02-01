@@ -14,6 +14,7 @@ a **category first**, then a **specific task** within that category.
 ## 🌐 Online Usage / 在线使用（推荐）
 
 You can use the tool directly via the following link:
+您可以通过以下链接直接使用该工具
 
 👉 https://charleyz2021.github.io/choice-picker/
 
@@ -32,7 +33,7 @@ You can use the tool directly via the following link:
 - 🎲 Randomly pick a category and a sub-task  
   随机抽取大类和对应小项
 - 🎞 Rolling text animation  
-  滚动动画，而不是直接跳结果
+  滚动动画显示结果
 - ✍️ Visual customization panel  
   可视化自定义事项，无需修改代码
 - ➕ Add or remove categories and tasks easily  
